@@ -1,0 +1,51 @@
+<ion-view view-title="Lista de mascotas" >
+  <div class="list">
+  <div class="bar bar-subheader item-input-inset
+      bar-light">
+    <label class="item-input-wrapper">
+    <i class="icon ion-search placeholder-icon"></i>
+      <input type="search"  ng-model="query"  placeholder="Buscar">
+    </label>
+    <button class="button button-small button-royal" ui-sref="app.newPet">
+      <i class="ion-plus-circled"></i>
+    </button>
+  </div>
+</div>
+  <ion-content  class="has-subheader">
+    <ion-list >
+     <ion-refresher
+        pulling-text="Pull to refresh..."
+        on-refresh="refreshItems()" >
+    </ion-refresher >
+    <ion-item ng-repeat='pet in pets.results | filter:query' class="item item-thumbnail-left item-icon-right" ng-click="selectPet(pet)"
+    href="#app/detailpet">
+      <div class="item item-image"
+           ng-if="pet.attributes.picture" >
+        <img ng-src="{{pet.attributes.picture.url()}}" >
+      </div >
+       <div class="item item-image"
+           ng-if="!pet.attributes.picture" >
+        <img ng-src="img/pet.png" >
+      </div >
+       <h3>{{pet.attributes.name}}</h3>
+        <p>{{pet.attributes.breed}}</p>
+        <i class="icon ion-ios-arrow-right item-note "></i>
+        <ion-option-button class="button-royal"ng-click="selectPet(pet)" ui-sref="app.editPet">
+        Editar
+       </ion-option-button>
+       <ion-option-button class="button-assertive" ng-click="showConfirm(pet)">
+         Borrar
+        </ion-option-button>
+   </ion-item>
+    <ion-infinite-scroll
+        ng-if="pets.hasMore"
+        on-infinite="nextPage()"
+        immediate-check="false" >
+    </ion-infinite-scroll >
+    <div class="padding text-center"
+         ng-if="!pets.hasMore" >
+      <p >No hay mas resultados</p >
+    </div >
+   </ion-list>
+  </ion-content >
+</ion-view >

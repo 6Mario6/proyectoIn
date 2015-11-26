@@ -1,0 +1,8 @@
+/* Empty. Add your own CSS if you like */
+.pane {
+        background: url("../img/fondo.jpg") no-repeat center center fixed; 
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        background-size: cover;
+ }
+ .angular-google-map-container { height: 400px; }

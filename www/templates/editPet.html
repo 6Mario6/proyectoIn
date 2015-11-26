@@ -1,0 +1,75 @@
+<ion-view view-title="Editar Mascota">	
+<div>
+	<ion-content class="padding has-header">
+   	<form class="list" ng-submit="editPet(createForm)">
+   		<div class="form-group" ng-click="addPicture()">
+				<a class="item item-icon-left">
+					<i class="icon ion-camera"></i>
+					Foto de tu mascota.
+				</a>
+		</div>
+		<div class="form-group">
+		<label class="item item-input ">
+			<span class="input-label" >Nombre Mascota:</span >
+			<input type="text"
+			placeholder="{{pet.attributes.name}}"
+			ng-model="formData.name"
+			>
+		</label >
+		</div>
+		<div class="form-group">
+		<label class="item item-input ">
+			<span class="input-label" >Especie:</span >
+			<input type="text"
+			placeholder="{{pet.attributes.species}}"
+			ng-model="formData.species"
+			>
+		</label >
+		</div>
+		<div class="form-group">
+		<label class="item item-input ">
+			<span class="input-label" >Raza:</span >
+			<input type="text"
+			placeholder="{{pet.attributes.breed}}"
+			ng-model="formData.breed"
+			>
+		</label >
+		</div>
+		<div class="form-group">
+		<label class="item item-input item-select">
+			<div class="input-label" >
+			Genero
+			</div >
+			<select name="category"
+			ng-model="formData.gender"
+			>
+			<option selected value="" >Please Choose
+			</option >
+			<option value="Femenino" >Femenino</option >
+			<option value="Masculino" >Masculino</option >
+			</select >
+		</label >
+		</div>
+		<div class="form-group">
+				<ionic-datepicker input-obj="datepickerObject">
+				<a class="item item-icon-left">
+					<i class="icon ion-calendar"></i>
+					Fecha de nacimiento:  {{datepickerObject.inputDate | date:'dd - MMMM - yyyy'}}
+				</a>
+			</ionic-datepicker>
+		</div>
+   		<div class="padding" ng-show="formData.picture">
+				<div class="picture">
+					<img ng-src="data:image/jpeg;base64,{{formData.picture}}"
+					     alt="" />
+				</div >
+		</div>
+			<div class="padding" >
+				<button class="button button-royal button-block"
+				        type="submit" >Crear
+				</button >
+			</div >
+   	</form>
+  </ion-content>
+</div>
+</ion-view>

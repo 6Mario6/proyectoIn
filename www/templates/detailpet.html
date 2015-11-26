@@ -1,0 +1,49 @@
+<ion-view view-title="Mascota">
+  <ion-content>
+  <div class="list card">
+    <ion-list class="list-inset">
+      <ion-item>
+      <div class="item item-image"
+           ng-if="pet.attributes.picture" >
+        <img ng-src="{{pet.attributes.picture.url()}}" >
+      </div >
+       <div class="item item-image"
+           ng-if="!pet.attributes.picture" >
+        <img ng-src="img/pet.png" >
+      </div >
+        <p class="row">
+        <label class="col">
+         <b>Nombre :</b> {{pet.attributes.name}}
+        </label>
+        <label class="col">
+         <b>ID:</b> {{pet.id}}
+        </label>
+        </p>
+        <p class="row">
+        <label class="col">
+         <b>Especie:</b> {{pet.attributes.species}}
+        </label>
+        <label class="col">
+         <b>Raza:</b> {{pet.attributes.breed}}
+        </label>
+        </p>
+        <p class="row">
+        <label class="col">
+         <b>Genero:</b> {{pet.attributes.gender}}
+        </label>
+        </p>
+         <p class="row">
+        <label class="col">
+         <b>Fecha de nacimiento:</b> {{pet.attributes.birthdate| date:'dd - MMMM - yyyy'}}
+        </label>
+         <label class="col">
+        </label>
+        </p>
+         <button class="button button-royal button-block" ui-sref="app.editPet" > 
+        <i class="icon ion-checkmark"></i> Editar Mascota
+        </button>
+      </ion-item>
+    </ion-list>
+</div> 
+  </ion-content>
+</ion-view>
