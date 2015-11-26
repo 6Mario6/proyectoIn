@@ -17,7 +17,7 @@
         pulling-text="Pull to refresh..."
         on-refresh="refreshItems()" >
     </ion-refresher >
-    <ion-item ng-repeat='pet in pets.results | filter:query' class="item item-thumbnail-left item-icon-right" ng-click="selectPet(pet)"
+    <ion-item ng-repeat='pet in pets.results | filter:query' class="item item-thumbnail-left  item-icon-right" ng-click="selectPet(pet)"
     href="#app/detailpet">
       <div class="item item-image"
            ng-if="pet.attributes.picture" >

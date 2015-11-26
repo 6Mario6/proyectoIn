@@ -113,6 +113,15 @@ angular.module('upet', ['ionic',
           controller: 'locationsCtrl'
         }
       }
+    })
+   .state('app.location', {
+      url: '/locations/:aId',
+      views: {
+        'menuContent' : {
+          templateUrl: 'templates/location.html',
+        
+        }
+      }
     });
 
  
