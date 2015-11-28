@@ -7,12 +7,16 @@
     </label>
   </div>
   <ion-content class="has-subheader">
-    <div class="list">
-        <a class="item" ng-repeat="post in posts | filter:query" target="_blank">  
-        <h2>{{ post.name }}</h2>
+     <ion-list >
+     <ion-refresher
+        pulling-text="Pull to refresh..."
+        on-refresh="refreshItems()" >
+    </ion-refresher >
+      <ion-item class="item" ng-repeat="post in posts | filter:query" href="#app/locations/map/{{post.place_id}}">
+      <h2>{{ post.name }}</h2>
         <i class="icon ion-location"></i>
-        <p class="post-address">{{ post.formatted_address }}</p> 
-      </a>
-      </div>
+        <p class="post-address">{{ post.formatted_address }}</p>
+      </ion-item>
+     </ion-list>  
   </ion-content>
 </ion-view>

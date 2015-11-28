@@ -121,6 +121,15 @@ angular.module('upet', ['ionic',
           controller: 'locationsCtrl'
         }
       }
+    })
+   .state('app.map', {
+      url: '/locations/map/:bId',
+      views: {
+        'menuContent' : {
+          templateUrl: 'templates/map.html',
+          controller: 'mapCtrl'
+        }
+      }
     });
 
  

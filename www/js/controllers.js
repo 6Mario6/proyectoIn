@@ -127,7 +127,6 @@ angular.module('upet.controllers', [])
   $scope.pet = Internalselection.getSelectedpet();
 })
 .controller('newCtrl', function($rootScope,$state, $ionicPopup, $ionicLoading, $scope, $window, Loader,PetService) {
-  
  $scope.datepickerObject = {
       titleLabel: 'Fecha de nacimiento', 
       todayLabel: 'Hoy',  
@@ -148,7 +147,6 @@ angular.module('upet.controllers', [])
         datePickerCallback(val);
       }
     };
-
   var datePickerCallback = function (val) {
   if (typeof(val) === 'undefined') {
     console.log('No date selected');
@@ -156,7 +154,6 @@ angular.module('upet.controllers', [])
     $scope.datepickerObject.inputDate = val;
   }
 };
-
 $scope.resetFormData = function () {
         $scope.formData = {  
             'name': '',
@@ -168,10 +165,8 @@ $scope.resetFormData = function () {
         };
     };
 $scope.resetFormData();
-
 $scope.trackPet = function (form) {
         $scope.formData.birthdate = $scope.datepickerObject.inputDate ;
-        
             if (!$scope.formData.name   || !$scope.formData.species|| !$scope.formData.breed|| !$scope.formData.gender|| !$scope.formData.birthdate) {
              Loader.toggleLoadingWithMessage("Por favor ingrese los datos", 2000);
             return false;
@@ -182,10 +177,7 @@ $scope.trackPet = function (form) {
             });
         
 };
-
 $scope.addPicture = function () {
-    alert("rockout");
-
   var options = {
       quality: 50,
       destinationType: Camera.DestinationType.DATA_URL,
@@ -196,7 +188,6 @@ $scope.addPicture = function () {
       popoverOptions: CameraPopoverOptions,
       saveToPhotoAlbum: false
     };
-
     $cordovaCamera.getPicture(options).then(function (imageData) {
       $scope.formData.picture = imageData;
     }, function (err) {
@@ -211,15 +202,6 @@ $scope.addPicture = function () {
 })
 .controller('editCtrl', function($rootScope,$state, $ionicPopup, $ionicLoading, $scope, $window, Loader,PetService,Internalselection) {
  $scope.pet = Internalselection.getSelectedpet();
- /*  $scope.petData = {  
-            'name': $scope.pet.attributes.name,
-            'species': $scope.pet.attributes.species,
-            'breed': $scope.pet.attributes.breed,
-            'gender': $scope.pet.attributes.gender,
-            'birthdate': $scope.pet.attributes.birthdate,
-            'picture': $scope.pet.attributes.picture
-        };
-    console.log( $scope.petData);*/
  $scope.datepickerObject = {
       titleLabel: 'Fecha de nacimiento', 
       todayLabel: 'Hoy',  
@@ -240,7 +222,6 @@ $scope.addPicture = function () {
         datePickerCallback(val);
       }
     };
-
   var datePickerCallback = function (val) {
   if (typeof(val) === 'undefined') {
     console.log('No date selected');
@@ -248,7 +229,6 @@ $scope.addPicture = function () {
     $scope.datepickerObject.inputDate = val;
   }
 };
-
 $scope.resetFormData = function () {
         $scope.formData = {  
             'name': '',
@@ -261,9 +241,7 @@ $scope.resetFormData = function () {
     };
 
 $scope.resetFormData();
-
 $scope.editPet = function (form) {
- 
  $scope.formData.id=$scope.pet.id;   
  $scope.formData.birthdate = $scope.datepickerObject.inputDate ;
 
@@ -279,7 +257,6 @@ $scope.editPet = function (form) {
             });
         
 };
-
 $scope.addPicture = function () {
     alert("rockout");
 
@@ -314,6 +291,56 @@ var baseGoogleMaps="https://maps.googleapis.com/maps/api/place/textsearch/json?q
 var apiKey="&key=AIzaSyAemxSjzF8S6j9ND6dB2j6clMKygtK7e9U";
 $scope.posts =[];
 var base;
+ $scope.refreshItems = function () {
+  switch (whichoption) {
+      case "1":
+        base= 'peluqueria+canina+medellin';
+        $http.get(baseGoogleMaps+base+apiKey)
+        .success(function(posts){
+        $localstorage.setObject("Peluquerias",posts.results);
+        $scope.posts=posts.results;
+        $scope.$broadcast('scroll.refreshComplete');
+        });
+        break;
+      case "2":
+        base= 'pet+hotel+Medellin';
+        $http.get(baseGoogleMaps+base+apiKey)
+        .success(function(posts){
+        $localstorage.setObject("Guarderias",posts.results);
+        $scope.posts=posts.results;
+        $scope.$broadcast('scroll.refreshComplete');
+        });
+        break;
+      case "3":
+      base= 'mascotas+tienda+Medellin';
+      $http.get(baseGoogleMaps+base+apiKey)
+      .success(function(posts){
+      $localstorage.setObject("Tiendas",posts.results);  
+      $scope.posts=posts.results;
+      $scope.$broadcast('scroll.refreshComplete');
+      });
+        break;
+      case "4":
+      base= 'veterinaria+Medellin';
+      $http.get(baseGoogleMaps+base+apiKey)
+      .success(function(posts){
+      $localstorage.setObject("Veterinarias",posts.results);  
+      $scope.posts=posts.results;
+      $scope.$broadcast('scroll.refreshComplete');
+      });
+      break;
+      case "5":
+      base= 'pet+Medellin';
+      $http.get(baseGoogleMaps+base+apiKey)
+      .success(function(posts){
+      $localstorage.setObject("Otros",posts.results);   
+      $scope.posts=posts.results;
+      $scope.$broadcast('scroll.refreshComplete');
+      });
+      break;
+    }
+      
+};
 switch (whichoption) {
       case "1":
       $scope.titleLocation="Peluquerias";
@@ -401,14 +428,13 @@ switch (whichoption) {
       });
       }
       break;
-}
- 
-
-$scope.map = { center: { latitude: 6.25578716589216,longitude: -75.56854621914067 }, 
-                       zoom: 12 
-              };
-$scope.marker={};             
-
-
-
+}             
+})
+.controller('mapCtrl', function($scope, $stateParams,Internalselection) {
+  $scope.map = { 
+    center: { 
+      latitude: 6.25578716589216,longitude: -75.56854621914067 
+    }, zoom: 12 
+  };
+$scope.marker={};
 });
