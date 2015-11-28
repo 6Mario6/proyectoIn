@@ -307,7 +307,102 @@ $scope.addPicture = function () {
 
 
 })
-.controller('locationsCtrl', function($scope) {
+.controller('locationsCtrl', function($scope,$http, $state,$ionicLoading,$localstorage) {
+$ionicLoading.show(); 
+var whichoption=$state.params.aId;
+var baseGoogleMaps="https://maps.googleapis.com/maps/api/place/textsearch/json?query=";
+var apiKey="&key=AIzaSyAemxSjzF8S6j9ND6dB2j6clMKygtK7e9U";
+$scope.posts =[];
+var base;
+switch (whichoption) {
+      case "1":
+      $scope.titleLocation="Peluquerias";
+      posts = $localstorage.getObject("Peluquerias");
+      if (posts.length > 0) {
+          $scope.posts = posts;
+          console.log(posts);
+          $ionicLoading.hide();
+      }else{
+        base= 'peluqueria+canina+medellin';
+        $http.get(baseGoogleMaps+base+apiKey)
+        .success(function(posts){
+        $localstorage.setObject("Peluquerias",posts.results);
+        $scope.posts=posts.results;
+        $ionicLoading.hide();
+        });
+      }
+     /* */
+        break;
+      case "2":
+      $scope.titleLocation="Guarderias";
+      posts = $localstorage.getObject("Guarderias");
+      if (posts.length > 0) {
+          $scope.posts = posts;
+          console.log(posts);
+          $ionicLoading.hide();
+      }else{
+        base= 'pet+hotel+Medellin';
+        $http.get(baseGoogleMaps+base+apiKey)
+        .success(function(posts){
+        $localstorage.setObject("Guarderias",posts.results);
+        $scope.posts=posts.results;
+        $ionicLoading.hide();
+        });
+      }
+        break;
+      case "3":
+      $scope.titleLocation="Tiendas";
+      posts = $localstorage.getObject("Tiendas");
+      if (posts.length > 0) {
+          $scope.posts = posts;
+          console.log(posts);
+          $ionicLoading.hide();
+      }else{
+      base= 'mascotas+tienda+Medellin';
+      $http.get(baseGoogleMaps+base+apiKey)
+      .success(function(posts){
+      $localstorage.setObject("Tiendas",posts.results);  
+      $scope.posts=posts.results;
+      $ionicLoading.hide();
+      });
+      }
+        break;
+      case "4":
+      $scope.titleLocation="Veterinarias";
+      posts = $localstorage.getObject("Veterinarias");
+      if (posts.length > 0) {
+          $scope.posts = posts;
+          console.log(posts);
+          $ionicLoading.hide();
+      }else{
+      base= 'veterinaria+Medellin';
+      $http.get(baseGoogleMaps+base+apiKey)
+      .success(function(posts){
+      $localstorage.setObject("Veterinarias",posts.results);  
+      $scope.posts=posts.results;
+      $ionicLoading.hide();
+      });
+      }
+        break;
+      case "5":
+      $scope.titleLocation="Otros";
+      posts = $localstorage.getObject("Otros");
+      if (posts.length > 0) {
+          $scope.posts = posts;
+          console.log(posts);
+          $ionicLoading.hide();
+      }else{
+      base= 'pet+Medellin';
+      $http.get(baseGoogleMaps+base+apiKey)
+      .success(function(posts){
+      $localstorage.setObject("Otros",posts.results);   
+      $scope.posts=posts.results;
+      $ionicLoading.hide();
+      });
+      }
+      break;
+}
+ 
 
 $scope.map = { center: { latitude: 6.25578716589216,longitude: -75.56854621914067 }, 
                        zoom: 12 

@@ -109,8 +109,7 @@ angular.module('upet', ['ionic',
       url: '/locations',
       views: {
         'menuContent': {
-          templateUrl: 'templates/locations.html',
-          controller: 'locationsCtrl'
+          templateUrl: 'templates/locations.html'
         }
       }
     })
@@ -119,7 +118,7 @@ angular.module('upet', ['ionic',
       views: {
         'menuContent' : {
           templateUrl: 'templates/location.html',
-        
+          controller: 'locationsCtrl'
         }
       }
     });

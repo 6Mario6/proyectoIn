@@ -6,3 +6,6 @@
         background-size: cover;
  }
  .angular-google-map-container { height: 400px; }
+ p.post-address{
+ 	white-space: normal;
+ }

@@ -1,1 +1,18 @@
-Hola
+<ion-view title="{{titleLocation}}">
+<div class="bar bar-subheader item-input-inset
+      bar-light">
+    <label class="item-input-wrapper">
+    <i class="icon ion-search placeholder-icon"></i>
+      <input type="search"  ng-model="query"  placeholder="Buscar">
+    </label>
+  </div>
+  <ion-content class="has-subheader">
+    <div class="list">
+        <a class="item" ng-repeat="post in posts | filter:query" target="_blank">  
+        <h2>{{ post.name }}</h2>
+        <i class="icon ion-location"></i>
+        <p class="post-address">{{ post.formatted_address }}</p> 
+      </a>
+      </div>
+  </ion-content>
+</ion-view>
