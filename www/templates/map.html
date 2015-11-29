@@ -2,12 +2,14 @@
   <ion-content class="has-header">
       <div class="list card">
       <div class="item item-image">
-        <ui-gmap-google-map center='map.center' zoom='map.zoom'></ui-gmap-google-map>
+        <ui-gmap-google-map center='map.center' zoom='map.zoom' draggable="true">
+            <ui-gmap-marker idKey="1" coords="marker" click="locationClicked(marker)" ></ui-gmap-marker>
+        </ui-gmap-google-map>
       </div>
       <div class="item">
-          
-          <h2>Pretty Hate Machine</h2>
-          <p>Nine Inch Nails</p>
+          <h2>{{placelocation.name}}</h2>
+          <p class="post-address">{{placelocation.formatted_address}}</p>
+          <p class="post-address">{{placelocation.international_phone_number}}</p>
       </div>
       </div>
   </ion-content>

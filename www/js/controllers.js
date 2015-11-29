@@ -126,7 +126,7 @@ angular.module('upet.controllers', [])
 .controller('detailCtrl', function($scope, $stateParams,Internalselection) {
   $scope.pet = Internalselection.getSelectedpet();
 })
-.controller('newCtrl', function($rootScope,$state, $ionicPopup, $ionicLoading, $scope, $window, Loader,PetService) {
+.controller('newCtrl', function($rootScope,$state, $ionicPopup, $ionicLoading, $scope, $window, $cordovaCamera, Loader,PetService) {
  $scope.datepickerObject = {
       titleLabel: 'Fecha de nacimiento', 
       todayLabel: 'Hoy',  
@@ -178,16 +178,18 @@ $scope.trackPet = function (form) {
         
 };
 $scope.addPicture = function () {
-  var options = {
+  alert("rockout");
+    var options = {
       quality: 50,
       destinationType: Camera.DestinationType.DATA_URL,
-      sourceType: Camera.PictureSourceType.CAMERA, // CAMERA
+      sourceType: Camera.PictureSourceType.PHOTOLIBRARY, // CAMERA
       allowEdit: true,
       encodingType: Camera.EncodingType.JPEG,
       targetWidth: 480,
       popoverOptions: CameraPopoverOptions,
       saveToPhotoAlbum: false
     };
+
     $cordovaCamera.getPicture(options).then(function (imageData) {
       $scope.formData.picture = imageData;
     }, function (err) {
@@ -200,7 +202,7 @@ $scope.addPicture = function () {
   };
 
 })
-.controller('editCtrl', function($rootScope,$state, $ionicPopup, $ionicLoading, $scope, $window, Loader,PetService,Internalselection) {
+.controller('editCtrl', function($rootScope,$state, $ionicPopup, $ionicLoading, $scope, $window, Loader,PetService,Internalselection, $cordovaCamera) {
  $scope.pet = Internalselection.getSelectedpet();
  $scope.datepickerObject = {
       titleLabel: 'Fecha de nacimiento', 
@@ -246,7 +248,6 @@ $scope.editPet = function (form) {
  $scope.formData.birthdate = $scope.datepickerObject.inputDate ;
 
         
-            console.log("newCtrl::trackPet");
             if (!$scope.formData.name   || !$scope.formData.species|| !$scope.formData.breed|| !$scope.formData.gender|| !$scope.formData.birthdate) {
              Loader.toggleLoadingWithMessage("Por favor ingrese los datos", 2000);
             return false;
@@ -258,12 +259,10 @@ $scope.editPet = function (form) {
         
 };
 $scope.addPicture = function () {
-    alert("rockout");
-
-  var options = {
+    var options = {
       quality: 50,
       destinationType: Camera.DestinationType.DATA_URL,
-      sourceType: Camera.PictureSourceType.CAMERA, // CAMERA
+      sourceType: Camera.PictureSourceType.PHOTOLIBRARY, // CAMERA
       allowEdit: true,
       encodingType: Camera.EncodingType.JPEG,
       targetWidth: 480,
@@ -347,7 +346,6 @@ switch (whichoption) {
       posts = $localstorage.getObject("Peluquerias");
       if (posts.length > 0) {
           $scope.posts = posts;
-          console.log(posts);
           $ionicLoading.hide();
       }else{
         base= 'peluqueria+canina+medellin';
@@ -365,7 +363,6 @@ switch (whichoption) {
       posts = $localstorage.getObject("Guarderias");
       if (posts.length > 0) {
           $scope.posts = posts;
-          console.log(posts);
           $ionicLoading.hide();
       }else{
         base= 'pet+hotel+Medellin';
@@ -382,7 +379,6 @@ switch (whichoption) {
       posts = $localstorage.getObject("Tiendas");
       if (posts.length > 0) {
           $scope.posts = posts;
-          console.log(posts);
           $ionicLoading.hide();
       }else{
       base= 'mascotas+tienda+Medellin';
@@ -399,7 +395,6 @@ switch (whichoption) {
       posts = $localstorage.getObject("Veterinarias");
       if (posts.length > 0) {
           $scope.posts = posts;
-          console.log(posts);
           $ionicLoading.hide();
       }else{
       base= 'veterinaria+Medellin';
@@ -416,7 +411,6 @@ switch (whichoption) {
       posts = $localstorage.getObject("Otros");
       if (posts.length > 0) {
           $scope.posts = posts;
-          console.log(posts);
           $ionicLoading.hide();
       }else{
       base= 'pet+Medellin';
@@ -430,11 +424,54 @@ switch (whichoption) {
       break;
 }             
 })
-.controller('mapCtrl', function($scope, $stateParams,Internalselection) {
+.controller('mapCtrl', function($scope, $state,Internalselection,$ionicLoading,$localstorage,$http) {
+  $ionicLoading.show(); 
   $scope.map = { 
     center: { 
       latitude: 6.25578716589216,longitude: -75.56854621914067 
-    }, zoom: 12 
+    }, zoom: 15
   };
-$scope.marker={};
+  $scope.marker={
+  };
+  var baseGoogleMaps="https://maps.googleapis.com/maps/api/place/details/json?placeid=";
+  var apiKey="&key=AIzaSyAemxSjzF8S6j9ND6dB2j6clMKygtK7e9U";
+  var whichLocation=$state.params.bId;
+
+  $scope.placelocation = $localstorage.getObject($state.params.bId);
+ 
+      if (JSON.stringify($scope.placelocation) != '{}') {
+         console.log($scope.placelocation);
+          $scope.marker={
+              latitude: $scope.placelocation.geometry.location.lat,
+              longitude:$scope.placelocation.geometry.location.lng,
+              title: $scope.placelocation.name+ "<br/>(Tap for directions)",
+              showWindow: true
+           };
+           $scope.map.center.latitude=$scope.placelocation.geometry.location.lat;
+           $scope.map.center.longitude=$scope.placelocation.geometry.location.lng;
+          $ionicLoading.hide();
+      }else{
+          $http.get(baseGoogleMaps+whichLocation+apiKey)
+          .success(function(placelocation){
+          $localstorage.setObject(whichLocation,placelocation.result);   
+          $scope.placelocation=placelocation.result;
+          $scope.marker={
+              latitude: $scope.placelocation.geometry.location.lat,
+              longitude: $scope.placelocation.geometry.location.lng,
+              title: $scope.placelocation.name+ "<br/>(Tap for directions)",
+              showWindow: true
+          
+           };
+          $scope.map.center.latitude=$scope.placelocation.geometry.location.lat;
+          $scope.map.center.longitude=$scope.placelocation.geometry.location.lng;
+          $ionicLoading.hide();
+      });
+
+      }
+$scope.locationClicked = function(marker){
+  alert("location");
+            window.location = "geo:" + marker.latitude + "," + marker.longitude + ";u=35";
+  };
+
+
 });
