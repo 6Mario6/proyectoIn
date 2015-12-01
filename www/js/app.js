@@ -130,6 +130,24 @@ angular.module('upet', ['ionic',
           controller: 'mapCtrl'
         }
       }
+    })
+    .state('app.activities', {
+      url: '/activities',
+      views: {
+        'menuContent' : {
+          templateUrl: 'templates/activities.html'
+         // controller: 'mapCtrl'
+        }
+      }
+    })
+     .state('app.newActivity', {
+      url: '/newactivity',
+      views: {
+        'menuContent' : {
+          templateUrl: 'templates/newActivity.html'
+         // controller: 'mapCtrl'
+        }
+      }
     });
 
  

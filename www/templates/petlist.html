@@ -27,8 +27,9 @@
            ng-if="!pet.attributes.picture" >
         <img ng-src="img/pet.png" >
       </div >
-       <h3>{{pet.attributes.name}}</h3>
-        <p>Raza:{{pet.attributes.breed}}</p>
+       <h3>Nombre: {{pet.attributes.name}}</h3>
+       <p>Especie: {{pet.attributes.species}}</p>
+        <p>Raza: {{pet.attributes.breed}}</p>
         <i class="icon ion-ios-arrow-right item-note "></i>
         <ion-option-button class="button-royal"ng-click="selectPet(pet)" ui-sref="app.editPet">
         Editar

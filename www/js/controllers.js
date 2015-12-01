@@ -178,7 +178,6 @@ $scope.trackPet = function (form) {
         
 };
 $scope.addPicture = function () {
-  alert("rockout");
     var options = {
       quality: 50,
       destinationType: Camera.DestinationType.DATA_URL,
@@ -468,10 +467,4 @@ switch (whichoption) {
       });
 
       }
-$scope.locationClicked = function(marker){
-  alert("location");
-            window.location = "geo:" + marker.latitude + "," + marker.longitude + ";u=35";
-  };
-
-
 });
