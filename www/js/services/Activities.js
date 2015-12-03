@@ -47,7 +47,7 @@ app.service("ActivityService", function ($q, AuthService,Loader) {
 						self.results.push(activity)
 					});
 					console.debug(self.results);
-
+					
 					// Are we at the end of the list?
 					if (results.length == 0) {
 						self.hasMore = false;

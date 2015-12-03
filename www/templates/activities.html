@@ -12,6 +12,38 @@
   </div>
 </div>
   <ion-content class="has-subheader">
-    <h1>Browse</h1>
+   <ion-list >
+   <ion-refresher
+        pulling-text="Pull to refresh..."
+        on-refresh="refreshItems()" >
+    </ion-refresher >
+    <ion-item ng-repeat='activity in activities.results | filter:query' class="item item-icon-right">
+   
+      <div class="item item-divider item-divider-calm">
+       <p class="post-address">{{activity.attributes.dateNotification | date:'EEEE, MMMM d, y'}}</p> 
+      </div>
+      <div class="item item-list item-text-wrap dayhighlight">
+      <h2>{{activity.attributes.title}}-
+      {{activity.attributes.dateNotification | date:'h:mm a'}}</h2>
+       <p class="post-address">{{activity.attributes.description}}</p> 
+      </div>
+        <i class="icon ion-ios-arrow-right item-note "></i>
+         <ion-option-button class="button-royal" >
+        Editar
+       </ion-option-button>
+       <ion-option-button class="button-assertive" >
+         Borrar
+        </ion-option-button>
+   </ion-item>
+    <ion-infinite-scroll
+        ng-if="activities.hasMore"
+        on-infinite="nextPage()"
+        immediate-check="false" >
+    </ion-infinite-scroll >
+    <div class="padding text-center"
+         ng-if="!activities.hasMore" >
+      <p >No hay mas resultados</p >
+    </div >
+     </ion-list >
   </ion-content>
 </ion-view>

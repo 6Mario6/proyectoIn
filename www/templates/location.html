@@ -13,9 +13,13 @@
         on-refresh="refreshItems()" >
     </ion-refresher >
       <ion-item class="item" ng-repeat="post in posts | filter:query" href="#app/locations/map/{{post.place_id}}">
-      <h2>{{ post.name }}</h2>
-        <i class="icon ion-location"></i>
+      <div class="item item-divider item-divider-calm">
+      <h2 >{{ post.name }}</h2>
+      </div>
+      <div class="item item-icon-left item-list item-text-wrap dayhighlight">
+        <i class="icon ion-map"></i>
         <p class="post-address">{{ post.formatted_address }}</p>
+     </div>
       </ion-item>
      </ion-list>  
   </ion-content>

@@ -466,9 +466,63 @@ switch (whichoption) {
 
       }
 })
-.controller('activitylistsCtrl', ['$scope', 'LSFactory', 'Loader','$ionicModal','PetService','$ionicLoading','Internalselection','$ionicPopup',
-    function($scope, LSFactory, Loader,$ionicModal,PetService,$ionicLoading,Internalselection,$ionicPopup) {
+.controller('activitylistsCtrl', ['$scope', 'LSFactory', 'Loader','$ionicModal','ActivityService','$ionicLoading','Internalselection','$ionicPopup',
+    function($scope, LSFactory, Loader,$ionicModal,ActivityService,$ionicLoading,Internalselection,$ionicPopup) {
+       var weekday = new Array(7);
+      weekday[0]=  "Domingo";
+      weekday[1] = "Lunes";
+      weekday[2] = "Martes";
+      weekday[3] = "Miercoles";
+      weekday[4] = "Jueves";
+      weekday[5] = "Viernes";
+      weekday[6] = "Sabado";
+      $scope.activities = ActivityService;
+        $ionicLoading.show();
+        $scope.activities.refresh().then(function () {
+        $ionicLoading.hide();  
+        });
+        $scope.refreshItems = function () {
+        $scope.activities.refresh().then(function () {
+          
+          $scope.$broadcast('scroll.refreshComplete');
+        });
+        };
+
+        $scope.nextPage = function () {
+        $scope.activities.next().then(function () {
+            $scope.$broadcast('scroll.refreshComplete');
+        });
+        };
+
+        $scope.selectActivity=function(activity){
+          Internalselection.setSelectedpet(activity);
+        };
        
+
+        $scope.showConfirm = function(activity) {
+          var confirmPopup = $ionicPopup.confirm({
+          title: 'Borrar mascota',
+          template: '¿Seguro que quieres borrar esta mascota?',
+          okType: 'button-royal'
+          });
+          confirmPopup.then(function(res) {
+            if(res) {
+            PetService.remove(activity);
+            console.log('You are not sure');
+              
+            } else {
+              console.log('You are not sure');
+            }
+          });
+        };
+
+
+
+
+
+
+
+
     }
 ])
 .controller('newactivityCtrl', function($rootScope,$state, $ionicPopup, $ionicLoading, $scope, Loader,ActivityService,PetService,$ionicModal) {   
@@ -569,7 +623,7 @@ $scope.resetFormData();
 $scope.trackActivity= function (form) {
         $scope.formData.dateNotification = $scope.datepickerObject.inputDate ;
         $scope.formData.dateNotification.setHours($scope.timePickerObject.inputEpochTime.getHours());
-        $scope.formData.dateNotification.setUTCHours($scope.timePickerObject.inputEpochTime.getHours());
+      //  $scope.formData.dateNotification.setUTCHours($scope.timePickerObject.inputEpochTime.getHours());
         $scope.formData.dateNotification.setMinutes($scope.timePickerObject.inputEpochTime.getMinutes());
             if (!$scope.formData.title   || !$scope.formData.description|| !$scope.formData.dateNotification) {
              Loader.toggleLoadingWithMessage("Por favor ingrese los datos", 2000);
