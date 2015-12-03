@@ -466,16 +466,16 @@ switch (whichoption) {
 
       }
 })
-.controller('activitylistsCtrl', ['$scope', 'LSFactory', 'Loader','$ionicModal','ActivityService','$ionicLoading','Internalselection','$ionicPopup',
-    function($scope, LSFactory, Loader,$ionicModal,ActivityService,$ionicLoading,Internalselection,$ionicPopup) {
-       var weekday = new Array(7);
+.controller('activitylistsCtrl', ['$scope', 'LSFactory', 'Loader','$ionicModal','ActivityService','$ionicLoading','InternalselectionActivity','$ionicPopup',
+    function($scope, LSFactory, Loader,$ionicModal,ActivityService,$ionicLoading,InternalselectionActivity,$ionicPopup) {
+   /*    var weekday = new Array(7);
       weekday[0]=  "Domingo";
       weekday[1] = "Lunes";
       weekday[2] = "Martes";
       weekday[3] = "Miercoles";
       weekday[4] = "Jueves";
       weekday[5] = "Viernes";
-      weekday[6] = "Sabado";
+      weekday[6] = "Sabado";*/
       $scope.activities = ActivityService;
         $ionicLoading.show();
         $scope.activities.refresh().then(function () {
@@ -495,34 +495,26 @@ switch (whichoption) {
         };
 
         $scope.selectActivity=function(activity){
-          Internalselection.setSelectedpet(activity);
+          InternalselectionActivity.setSelectedactivity(activity);
         };
        
 
         $scope.showConfirm = function(activity) {
           var confirmPopup = $ionicPopup.confirm({
-          title: 'Borrar mascota',
-          template: '¿Seguro que quieres borrar esta mascota?',
+          title: 'Borrar actividad',
+          template: '¿Seguro que quieres borrar esta actividad?',
           okType: 'button-royal'
           });
           confirmPopup.then(function(res) {
             if(res) {
-            PetService.remove(activity);
-            console.log('You are not sure');
+            ActivityService.remove(activity);
+            console.log('You are sure');
               
             } else {
               console.log('You are not sure');
             }
           });
         };
-
-
-
-
-
-
-
-
     }
 ])
 .controller('newactivityCtrl', function($rootScope,$state, $ionicPopup, $ionicLoading, $scope, Loader,ActivityService,PetService,$ionicModal) {   
@@ -631,6 +623,122 @@ $scope.trackActivity= function (form) {
             }
             console.log($scope.formData.dateNotification);   
            ActivityService.track($scope.formData).then(function () {     
+                $scope.resetFormData(); 
+                $state.go("app.activities");      
+
+            });
+        
+}; 
+})
+.controller('editActivityCtrl', function($rootScope,$state, $ionicPopup, $ionicLoading, $scope, Loader,ActivityService,PetService,$ionicModal,InternalselectionActivity) {   
+      $scope.activity = InternalselectionActivity.getSelectedactivity();
+
+      $ionicModal.fromTemplateUrl('templates/selectPets.html', {
+          scope: $scope,
+          animation: 'slide-in-up'
+      }).then(function(modal) {
+        $scope.modal=modal;
+        $scope.pets = PetService;
+        $scope.pets.refresh().then(function () {
+        $ionicLoading.hide();  
+        });
+        
+      });
+      $scope.openModal = function() {
+          $scope.modal.show();
+      };
+      $scope.closeModal = function() {
+         $scope.modal.hide();
+         if (typeof cancelCallback === 'function') {
+                        cancelCallback();
+          }
+      };
+        //Cleanup the modal when we're done with it!
+      $scope.$on('$destroy', function() {
+         $scope.modal.remove();
+      });
+      // Execute action on hide modal
+      $scope.$on('modal.hidden', function() {
+        // Execute action
+      });
+      // Execute action on remove modal
+      $scope.$on('modal.removed', function() {
+    // Execute action
+      }); 
+
+ $scope.datepickerObject = {
+      titleLabel: 'Fecha de actividad', 
+      todayLabel: 'Hoy',  
+      closeLabel: 'Cerrar',  
+      setLabel: 'OK',  
+      setButtonType : 'button-royal',  
+      todayButtonType : 'button-royal',  
+      closeButtonType : 'button-stable',  
+      inputDate: new Date(),   
+      mondayFirst: true,  
+      templateType: 'popup', 
+      showTodayButton: 'false', 
+      modalHeaderColor: 'bar-positive',
+      modalFooterColor: 'bar-positive', 
+      from: new Date(1988, 8, 2),  
+      to: new Date(2018, 8, 25),   
+      callback: function (val) {    
+        datePickerCallback(val);
+      }
+    };
+  var datePickerCallback = function (val) {
+    if (typeof(val) === 'undefined') {
+        console.log('No date selected');
+    } else {
+      $scope.datepickerObject.inputDate = val;
+    }
+  };
+
+  $scope.timePickerObject = {
+    inputEpochTime: new Date(),  //Optional
+    step: 15,  //Optional
+    format: 12,  //Optional
+    titleLabel: 'Hora de actividad',  //Optional
+    setLabel: 'Set',  //Optional
+    closeLabel: 'Close',  //Optional
+    setButtonType: 'button-royal',  //Optional
+    closeButtonType: 'button-stable',  //Optional
+    callback: function (val) {    //Mandatory
+    timePickerCallback(val);
+  }
+};
+  var timePickerCallback = function (val) {
+     if (typeof (val) === 'undefined') {
+       console.log('Time not selected');
+    } else {
+      $scope.timePickerObject.inputEpochTime.setHours(new Date(val*1000).getUTCHours());
+      $scope.timePickerObject.inputEpochTime.setMinutes(new Date(val*1000).getUTCMinutes());
+      $scope.selectedTime = new Date(val * 1000);
+      console.log('Selected epoch is : ', val, 'and the time is ', $scope.selectedTime.getUTCHours(), ':', $scope.selectedTime.getUTCMinutes(), 'in UTC');
+    }
+}
+
+$scope.resetFormData = function () {
+        $scope.formData = {  
+            'title': '',
+            'description': '',
+            'dateNotification': ''
+
+        };
+    };
+$scope.resetFormData();
+$scope.editActivity= function (form) {
+  $scope.formData.id=$scope.activity.id;
+        $scope.formData.dateNotification = $scope.datepickerObject.inputDate ;
+        $scope.formData.dateNotification.setHours($scope.timePickerObject.inputEpochTime.getHours());
+      //  $scope.formData.dateNotification.setUTCHours($scope.timePickerObject.inputEpochTime.getHours());
+        $scope.formData.dateNotification.setMinutes($scope.timePickerObject.inputEpochTime.getMinutes());
+            if (!$scope.formData.title   || !$scope.formData.description|| !$scope.formData.dateNotification) {
+             Loader.toggleLoadingWithMessage("Por favor ingrese los datos", 2000);
+            return false;
+            }
+            console.log($scope.formData.dateNotification);   
+           ActivityService.update($scope.formData).then(function () {     
                 $scope.resetFormData(); 
                 $state.go("app.activities");      
 

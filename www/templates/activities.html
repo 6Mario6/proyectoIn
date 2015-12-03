@@ -17,7 +17,7 @@
         pulling-text="Pull to refresh..."
         on-refresh="refreshItems()" >
     </ion-refresher >
-    <ion-item ng-repeat='activity in activities.results | filter:query' class="item item-icon-right">
+    <ion-item ng-repeat='activity in activities.results | filter:query' ng-click="selectActivity(activity)" class="item item-icon-right">
    
       <div class="item item-divider item-divider-calm">
        <p class="post-address">{{activity.attributes.dateNotification | date:'EEEE, MMMM d, y'}}</p> 
@@ -28,10 +28,12 @@
        <p class="post-address">{{activity.attributes.description}}</p> 
       </div>
         <i class="icon ion-ios-arrow-right item-note "></i>
-         <ion-option-button class="button-royal" >
+         <ion-option-button class="button-royal" 
+         ng-click="selectActivity(activity)" 
+         ui-sref="app.editActivity">
         Editar
        </ion-option-button>
-       <ion-option-button class="button-assertive" >
+       <ion-option-button class="button-assertive"  ng-click="showConfirm(activity)">
          Borrar
         </ion-option-button>
    </ion-item>

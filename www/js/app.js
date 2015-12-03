@@ -150,6 +150,15 @@ angular.module('upet', ['ionic',
           controller: 'newactivityCtrl'
         }
       }
+    })
+     .state('app.editActivity', {
+      url: '/editActivity',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/editActivity.html',
+          controller: 'editActivityCtrl'
+        }
+      }
     });
 
  

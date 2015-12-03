@@ -97,7 +97,7 @@ app.service("ActivityService", function ($q, AuthService,Loader) {
 
 			var Activity = new Activity();
 			Activity.id = data.id;
-			AActivity.set("owner", user);
+			Activity.set("owner", user);
 			Activity.set("title", data.title);
 			Activity.set("description", data.description);
 			Activity.set("dateNotification", data.dateNotification);
@@ -148,7 +148,7 @@ app.service("ActivityService", function ($q, AuthService,Loader) {
 
 	return self;
 });
-app.service("Internalselection",function () {
+app.service("InternalselectionActivity",function () {
     var selectedactivity = {};
     this.setSelectedactivity =function (activity) {
         selectedactivity = activity;
