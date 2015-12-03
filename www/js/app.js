@@ -11,7 +11,9 @@ angular.module('upet', ['ionic',
  'upet.factory',
  'upet.services.authentication',
  'upet.services.pets',
+ 'upet.services.activities',
   'ionic-datepicker',
+  'ionic-timepicker',
   'ngCordova',
   'uiGmapgoogle-maps'
  ])
@@ -135,8 +137,8 @@ angular.module('upet', ['ionic',
       url: '/activities',
       views: {
         'menuContent' : {
-          templateUrl: 'templates/activities.html'
-         // controller: 'mapCtrl'
+          templateUrl: 'templates/activities.html',
+          controller: 'activitylistsCtrl'
         }
       }
     })
@@ -144,8 +146,8 @@ angular.module('upet', ['ionic',
       url: '/newactivity',
       views: {
         'menuContent' : {
-          templateUrl: 'templates/newActivity.html'
-         // controller: 'mapCtrl'
+          templateUrl: 'templates/newActivity.html',
+          controller: 'newactivityCtrl'
         }
       }
     });

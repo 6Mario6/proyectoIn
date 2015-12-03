@@ -1,0 +1,27 @@
+<ion-modal-view class="pane">
+    <ion-header-bar class="bar-royal">
+     <div class="buttons">
+                <button class="button button-royal" ng-click="closeModal()">Cerrar</button>
+      </div>
+      <h1 class="title">Seleccionar Mascota</h1>
+    </ion-header-bar>
+    <ion-content>
+      <div class="list card">
+      	<ul class="list">
+   			<li class="item item-checkbox" ng-repeat='pet in pets.results'>
+     		<label class="checkbox">
+       		<input type="checkbox">
+     		</label>
+     		Nombre: {{pet.attributes.name}}
+  			</li>
+  		</div>
+  			
+		</ul>
+		<div class="padding" >
+				<button class="button button-royal button-block"
+				        type="submit" >Aceptar
+				</button >
+			</div >
+	</div>
+    </ion-content>
+</ion-modal-view>

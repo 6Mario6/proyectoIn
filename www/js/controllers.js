@@ -1,7 +1,6 @@
 angular.module('upet.controllers', [])
-.controller('AppCtrl', ['$rootScope', '$ionicModal', 'AuthFactory', '$location', 'UserFactory', '$scope', 'Loader', 'AuthService',
-    function($rootScope, $ionicModal, AuthFactory, $location, UserFactory, $scope, Loader,AuthService) {
-       
+.controller('AppCtrl', ['$rootScope', '$ionicModal', 'AuthFactory', '$location', 'UserFactory', '$scope', 'Loader', 'AuthService','PetService',
+    function($rootScope, $ionicModal, AuthFactory, $location, UserFactory, $scope, Loader,AuthService,PetService) {
            $rootScope.$on('showLoginModal', function($event, scope, cancelCallback, callback) {
            $scope.user = {
                 "name": "",
@@ -84,10 +83,9 @@ angular.module('upet.controllers', [])
     function($scope, PetsFactory, LSFactory, Loader,$ionicModal,PetService,$ionicLoading,Internalselection,$ionicPopup) {
         $scope.pets = PetService;
         $ionicLoading.show();
-        $scope.pets.load().then(function () {
+        $scope.pets.refresh().then(function () {
         $ionicLoading.hide();  
         });
-
         $scope.refreshItems = function () {
         $scope.pets.refresh().then(function () {
             $scope.$broadcast('scroll.refreshComplete');
@@ -467,4 +465,124 @@ switch (whichoption) {
       });
 
       }
+})
+.controller('activitylistsCtrl', ['$scope', 'LSFactory', 'Loader','$ionicModal','PetService','$ionicLoading','Internalselection','$ionicPopup',
+    function($scope, LSFactory, Loader,$ionicModal,PetService,$ionicLoading,Internalselection,$ionicPopup) {
+       
+    }
+])
+.controller('newactivityCtrl', function($rootScope,$state, $ionicPopup, $ionicLoading, $scope, Loader,ActivityService,PetService,$ionicModal) {   
+      $ionicModal.fromTemplateUrl('templates/selectPets.html', {
+          scope: $scope,
+          animation: 'slide-in-up'
+      }).then(function(modal) {
+        $scope.modal=modal;
+        $scope.pets = PetService;
+        $scope.pets.refresh().then(function () {
+        $ionicLoading.hide();  
+        });
+        
+      });
+      $scope.openModal = function() {
+          $scope.modal.show();
+      };
+      $scope.closeModal = function() {
+         $scope.modal.hide();
+         if (typeof cancelCallback === 'function') {
+                        cancelCallback();
+          }
+      };
+        //Cleanup the modal when we're done with it!
+      $scope.$on('$destroy', function() {
+         $scope.modal.remove();
+      });
+      // Execute action on hide modal
+      $scope.$on('modal.hidden', function() {
+        // Execute action
+      });
+      // Execute action on remove modal
+      $scope.$on('modal.removed', function() {
+    // Execute action
+      }); 
+
+ $scope.datepickerObject = {
+      titleLabel: 'Fecha de actividad', 
+      todayLabel: 'Hoy',  
+      closeLabel: 'Cerrar',  
+      setLabel: 'OK',  
+      setButtonType : 'button-royal',  
+      todayButtonType : 'button-royal',  
+      closeButtonType : 'button-stable',  
+      inputDate: new Date(),   
+      mondayFirst: true,  
+      templateType: 'popup', 
+      showTodayButton: 'false', 
+      modalHeaderColor: 'bar-positive',
+      modalFooterColor: 'bar-positive', 
+      from: new Date(1988, 8, 2),  
+      to: new Date(2018, 8, 25),   
+      callback: function (val) {    
+        datePickerCallback(val);
+      }
+    };
+  var datePickerCallback = function (val) {
+    if (typeof(val) === 'undefined') {
+        console.log('No date selected');
+    } else {
+      $scope.datepickerObject.inputDate = val;
+    }
+  };
+
+  $scope.timePickerObject = {
+    inputEpochTime: new Date(),  //Optional
+    step: 15,  //Optional
+    format: 12,  //Optional
+    titleLabel: 'Hora de actividad',  //Optional
+    setLabel: 'Set',  //Optional
+    closeLabel: 'Close',  //Optional
+    setButtonType: 'button-royal',  //Optional
+    closeButtonType: 'button-stable',  //Optional
+    callback: function (val) {    //Mandatory
+    timePickerCallback(val);
+  }
+};
+  var timePickerCallback = function (val) {
+     if (typeof (val) === 'undefined') {
+       console.log('Time not selected');
+    } else {
+      $scope.timePickerObject.inputEpochTime.setHours(new Date(val*1000).getUTCHours());
+      $scope.timePickerObject.inputEpochTime.setMinutes(new Date(val*1000).getUTCMinutes());
+      $scope.selectedTime = new Date(val * 1000);
+      console.log('Selected epoch is : ', val, 'and the time is ', $scope.selectedTime.getUTCHours(), ':', $scope.selectedTime.getUTCMinutes(), 'in UTC');
+    }
+}
+
+$scope.resetFormData = function () {
+        $scope.formData = {  
+            'title': '',
+            'description': '',
+            'dateNotification': ''
+
+        };
+    };
+$scope.resetFormData();
+$scope.trackActivity= function (form) {
+        $scope.formData.dateNotification = $scope.datepickerObject.inputDate ;
+        $scope.formData.dateNotification.setHours($scope.timePickerObject.inputEpochTime.getHours());
+        $scope.formData.dateNotification.setUTCHours($scope.timePickerObject.inputEpochTime.getHours());
+        $scope.formData.dateNotification.setMinutes($scope.timePickerObject.inputEpochTime.getMinutes());
+            if (!$scope.formData.title   || !$scope.formData.description|| !$scope.formData.dateNotification) {
+             Loader.toggleLoadingWithMessage("Por favor ingrese los datos", 2000);
+            return false;
+            }
+            console.log($scope.formData.dateNotification);   
+           ActivityService.track($scope.formData).then(function () {     
+                $scope.resetFormData(); 
+                $state.go("app.activities");      
+
+            });
+        
+};
+
+  
 });

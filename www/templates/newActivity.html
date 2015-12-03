@@ -1,30 +1,46 @@
-<ion-view view-title="Actividad">
+<ion-view title="Nueva">
  
   <ion-content class="padding has-header">
-   <form class="list">
+   <form class="list" ng-submit="trackActivity(createForm)">
     <div class="form-group">
     <label class="item item-input ">
-      <span class="input-label" >Nombre:</span>
-      <input type="text">
+      <span class="input-label" >Titulo:</span>
+      <input type="text" ng-model="formData.title">
     </label >
     </div>
     <div class="form-group">
     <label class="item item-input ">
-      <textarea  rows="10" placeholder="Descripción..." ></textarea>
+      <textarea ng-model="formData.description" rows="10" placeholder="Descripción..." ></textarea>
     </label >
     </div>
     <div class="form-group">
-     <li class="item item-toggle">
-     Repetir
-     <label class="toggle toggle-royal">
-       <input type="checkbox">
-       <div class="track">
-         <div class="handle"></div>
-       </div>
-     </label>
-  </li>
+      <ionic-datepicker input-obj="datepickerObject">
+        <a class="item item-icon-left">
+          <i class="icon ion-calendar"></i>
+          {{datepickerObject.inputDate | date:'dd - MMMM - yyyy'}}
+        </a>
+      </ionic-datepicker>
     </div>
-
+    <div class="form-group">
+    <ionic-timepicker input-obj="timePickerObject">
+        <a class="item item-icon-left">
+          <i class="icon ion-clock"></i>
+          {{timePickerObject.inputEpochTime |date:'h:mm a' }}
+        </a>
+    </ionic-timepicker>
+    </div>
+     <div class="form-group">
+      <a class="item item-icon-left" ng-click="openModal()">
+      <i class="icon ion-ios-paw"></i>
+        Mascotas
+      </a>
+    </div>
+    
+      <div class="padding" >
+        <button class="button button-royal button-block"
+                type="submit" >Crear
+        </button >
+      </div >
    </form>
   </ion-content>
 </ion-view>
