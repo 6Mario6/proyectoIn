@@ -466,16 +466,8 @@ switch (whichoption) {
 
       }
 })
-.controller('activitylistsCtrl', ['$scope', 'LSFactory', 'Loader','$ionicModal','ActivityService','$ionicLoading','InternalselectionActivity','$ionicPopup',
-    function($scope, LSFactory, Loader,$ionicModal,ActivityService,$ionicLoading,InternalselectionActivity,$ionicPopup) {
-   /*    var weekday = new Array(7);
-      weekday[0]=  "Domingo";
-      weekday[1] = "Lunes";
-      weekday[2] = "Martes";
-      weekday[3] = "Miercoles";
-      weekday[4] = "Jueves";
-      weekday[5] = "Viernes";
-      weekday[6] = "Sabado";*/
+.controller('activitylistsCtrl', ['$scope', 'LSFactory', 'Loader','$ionicModal','ActivityService','$ionicLoading','InternalselectionActivity','$ionicPopup', '$ionicPlatform', '$cordovaLocalNotification',
+    function($scope, LSFactory, Loader,$ionicModal,ActivityService,$ionicLoading,InternalselectionActivity,$ionicPopup, $ionicPlatform, $cordovaLocalNotification) {
       $scope.activities = ActivityService;
         $ionicLoading.show();
         $scope.activities.refresh().then(function () {
@@ -500,25 +492,13 @@ switch (whichoption) {
        
 
         $scope.showConfirm = function(activity) {
-          var confirmPopup = $ionicPopup.confirm({
-          title: 'Borrar actividad',
-          template: '¿Seguro que quieres borrar esta actividad?',
-          okType: 'button-royal'
-          });
-          confirmPopup.then(function(res) {
-            if(res) {
-            ActivityService.remove(activity);
-            console.log('You are sure');
-              
-            } else {
-              console.log('You are not sure');
-            }
-          });
+          
         };
     }
 ])
-.controller('newactivityCtrl', function($rootScope,$state, $ionicPopup, $ionicLoading, $scope, Loader,ActivityService,PetService,$ionicModal) {   
-      $ionicModal.fromTemplateUrl('templates/selectPets.html', {
+.controller('newactivityCtrl', function($rootScope,$state, $ionicLoading, $scope, Loader,ActivityService,PetService,$ionicModal,
+  $ionicPopup, $ionicPlatform, $cordovaLocalNotification) {   
+     /* $ionicModal.fromTemplateUrl('templates/selectPets.html', {
           scope: $scope,
           animation: 'slide-in-up'
       }).then(function(modal) {
@@ -549,7 +529,7 @@ switch (whichoption) {
       // Execute action on remove modal
       $scope.$on('modal.removed', function() {
     // Execute action
-      }); 
+      }); */
 
  $scope.datepickerObject = {
       titleLabel: 'Fecha de actividad', 
@@ -607,30 +587,101 @@ $scope.resetFormData = function () {
         $scope.formData = {  
             'title': '',
             'description': '',
-            'dateNotification': ''
-
+            'dateNotification': '',
+            'repeat': ''
         };
     };
 $scope.resetFormData();
-$scope.trackActivity= function (form) {
-        $scope.formData.dateNotification = $scope.datepickerObject.inputDate ;
-        $scope.formData.dateNotification.setHours($scope.timePickerObject.inputEpochTime.getHours());
-      //  $scope.formData.dateNotification.setUTCHours($scope.timePickerObject.inputEpochTime.getHours());
-        $scope.formData.dateNotification.setMinutes($scope.timePickerObject.inputEpochTime.getMinutes());
-            if (!$scope.formData.title   || !$scope.formData.description|| !$scope.formData.dateNotification) {
+$ionicPlatform.ready(function() {
+    $scope.getNotificationIds = function () {
+      $cordovaLocalNotification.getScheduledIds().then(function (scheduledIds) {
+        
+        $scope.result = [];
+        
+        for(var key in scheduledIds) {
+          var row = {'id': scheduledIds[key]};
+                    $scope.result.push(row);
+        }
+      });
+    };
+    $scope.getNotificationIds(); 
+    $scope.addNotification = function (formData) {
+      $scope.formData.dateNotification = $scope.datepickerObject.inputDate ;
+      $scope.formData.dateNotification.setHours($scope.timePickerObject.inputEpochTime.getHours());
+      $scope.formData.dateNotification.setMinutes($scope.timePickerObject.inputEpochTime.getMinutes());
+            if (!$scope.formData.title   || !$scope.formData.description|| !$scope.formData.dateNotification|| !$scope.formData.repeat) {
              Loader.toggleLoadingWithMessage("Por favor ingrese los datos", 2000);
             return false;
             }
-            console.log($scope.formData.dateNotification);   
-           ActivityService.track($scope.formData).then(function () {     
-                $scope.resetFormData(); 
-                $state.go("app.activities");      
+          ActivityService.track($scope.formData).then(function (Activity) { 
+      
 
+ var now  = $scope.formData.dateNotification.getTime(),
+  _30_seconds_from_now = new Date(now + 30*1000);
+
+$cordovaLocalNotification.isScheduled(now).then(function (isScheduled) {
+ 
+        if (isScheduled){
+          $ionicPopup.alert({
+            title: "Warning",
+            template: "Notification with this ID is already scheduled"
+          }).then(function(res) {
+            //Activity.id = "";
+          });
+        }else{
+       
+
+          $cordovaLocalNotification.add({
+            id:      now,
+            title:   formData.title,
+            message: formData.description,
+            every:  formData.repeat,
+            date:   _30_seconds_from_now
+          });
+          
+          $ionicPopup.alert({
+            title: "Agregada",
+            template: "Notificacion " + formData.title
+          }).then(function(res) {
+            $scope.getNotificationIds();
+          //  Activity.id = "";
+            formData.description = "";
+          });
+        }
+      });
+          $scope.resetFormData(); 
+          $state.go("app.activities");      
             });
-        
-}; 
+    }; 
+    $scope.cancelNotification = function (activity) {
+      var confirmPopup = $ionicPopup.confirm({
+          title: 'Borrar actividad',
+          template: '¿Seguro que quieres borrar esta actividad?',
+          okType: 'button-royal'
+          });
+          confirmPopup.then(function(res) {
+            if(res) {
+            ActivityService.remove(activity);
+            id=activity.attributes.idDate;
+           $cordovaLocalNotification.cancel(id).then(function () {
+          //  alert('callback for cancellation background notification'); // never get called
+           });  
+          $ionicPopup.alert({
+            title: "Actividad",
+            template: "Se removio la actividad!"
+          }).then(function(res) {
+            $scope.getNotificationIds();
+          });
+              
+            } else {
+              console.log('You are not sure');
+            }
+          });
+    };
+  });
 })
-.controller('editActivityCtrl', function($rootScope,$state, $ionicPopup, $ionicLoading, $scope, Loader,ActivityService,PetService,$ionicModal,InternalselectionActivity) {   
+.controller('editActivityCtrl', function($rootScope,$state, $ionicPopup, $ionicLoading, $scope, Loader,ActivityService,PetService,$ionicModal,InternalselectionActivity,
+  $ionicPopup, $ionicPlatform, $cordovaLocalNotification) {   
       $scope.activity = InternalselectionActivity.getSelectedactivity();
 
       $ionicModal.fromTemplateUrl('templates/selectPets.html', {
@@ -727,24 +778,57 @@ $scope.resetFormData = function () {
         };
     };
 $scope.resetFormData();
-$scope.editActivity= function (form) {
-  $scope.formData.id=$scope.activity.id;
-        $scope.formData.dateNotification = $scope.datepickerObject.inputDate ;
-        $scope.formData.dateNotification.setHours($scope.timePickerObject.inputEpochTime.getHours());
-      //  $scope.formData.dateNotification.setUTCHours($scope.timePickerObject.inputEpochTime.getHours());
-        $scope.formData.dateNotification.setMinutes($scope.timePickerObject.inputEpochTime.getMinutes());
-            if (!$scope.formData.title   || !$scope.formData.description|| !$scope.formData.dateNotification) {
+
+$ionicPlatform.ready(function() {
+    $scope.getNotificationIds = function () {
+      $cordovaLocalNotification.getScheduledIds().then(function (scheduledIds) {
+        
+        $scope.result = [];
+        
+        for(var key in scheduledIds) {
+          var row = {'id': scheduledIds[key]};
+                    $scope.result.push(row);
+        }
+      });
+    };
+    $scope.getNotificationIds(); 
+ $scope.updateNotification = function (formData) {
+$scope.formData.id=$scope.activity.id;
+var newid =$scope.activity.get("idDate");
+$scope.formData.dateNotification = $scope.datepickerObject.inputDate ;
+$scope.formData.dateNotification.setHours($scope.timePickerObject.inputEpochTime.getHours());
+$scope.formData.dateNotification.setMinutes($scope.timePickerObject.inputEpochTime.getMinutes());
+            if (!$scope.formData.title   || !$scope.formData.description|| !$scope.formData.dateNotification|| !$scope.formData.repeat) {
              Loader.toggleLoadingWithMessage("Por favor ingrese los datos", 2000);
             return false;
             }
-            console.log($scope.formData.dateNotification);   
-           ActivityService.update($scope.formData).then(function () {     
-                $scope.resetFormData(); 
-                $state.go("app.activities");      
+ActivityService.update($scope.formData).then(function (Activity) { 
+  var now  = $scope.formData.dateNotification.getTime(),
+  _30_seconds_from_now = new Date(now + 30*1000);
 
-            });
-        
-};
 
+      $cordovaLocalNotification.update({
+            id: newid,
+            title: formData.title,
+            message: formData.description,
+            every:  formData.repeat,
+            at:   _30_seconds_from_now
+          }).then(function (result) {
+          
+           
+           $ionicPopup.alert({
+            title: "Agregada",
+            template: "Notificacion " + formData.title
+          }).then(function(res) {
+            $scope.getNotificationIds();
+          //  Activity.id = "";
+            formData.description = "";
+          });
+          });
+          $scope.resetFormData(); 
+          $state.go("app.activities");      
+  });
+}; 
+});
   
 });

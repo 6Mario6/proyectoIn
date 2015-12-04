@@ -68,17 +68,18 @@ app.service("ActivityService", function ($q, AuthService,Loader) {
 			var user = AuthService.user;
 
 			var Activity = new Activity();
+			var idDate=data.dateNotification.getTime();
 			Activity.set("owner", user);
 			Activity.set("title", data.title);
 			Activity.set("description", data.description);
 			Activity.set("dateNotification", data.dateNotification);
-			
-
+			Activity.set("idDate", idDate);
+			Activity.set("repeat", data.repeat);
 			Activity.save(null, {
 				success: function (Activity) {
 					
 					self.results.unshift(Activity);
-					Loader.toggleLoadingWithMessage("Se ingreso la actividad!", 2000);
+					//Loader.toggleLoadingWithMessage("Se ingreso la actividad!", 2000);
 					d.resolve(Activity);
 				},
 				error: function (item, error) {
@@ -97,6 +98,7 @@ app.service("ActivityService", function ($q, AuthService,Loader) {
 
 			var Activity = new Activity();
 			Activity.id = data.id;
+
 			Activity.set("owner", user);
 			Activity.set("title", data.title);
 			Activity.set("description", data.description);
@@ -113,7 +115,7 @@ app.service("ActivityService", function ($q, AuthService,Loader) {
 						}
 					}
 					self.results.unshift(Activity);
-					Loader.toggleLoadingWithMessage("Se ingreso la actividad!", 2000);
+					//Loader.toggleLoadingWithMessage("Se ingreso la actividad!", 2000);
 					d.resolve(Activity);
 				},
 				error: function (item, error) {
@@ -136,7 +138,7 @@ app.service("ActivityService", function ($q, AuthService,Loader) {
 						}
 					}
    				myObj.destroy({});
-   				Loader.toggleLoadingWithMessage("Se removio la actividad!", 2000);
+   				//Loader.toggleLoadingWithMessage("Se removio la actividad!", 2000);
  			 },
  			error: function(object, error) {
     			

@@ -1,7 +1,7 @@
 <ion-view title="Editar">
  
   <ion-content class="padding has-header">
-   <form class="list" ng-submit="editActivity(createForm)">
+   <form class="list" ng-submit="updateNotification(formData)">
     <div class="form-group">
     <label class="item item-input ">
       <span class="input-label" >Titulo:</span>
@@ -30,12 +30,30 @@
         </a>
     </ionic-timepicker>
     </div>
-     <div class="form-group">
+    <div class="form-group">
+    <label class="item item-input item-select">
+      <div class="input-label" >
+      Repetir
+      </div >
+      <select name="category"
+      ng-model="formData.repeat"
+      >
+      <option selected value="" >Please Choose
+      </option >
+       <option value="0" >Una vez</option >
+      <option value="day" >Diario</option >
+      <option value="week" >Semanal</option >
+      <option value="month" >Mensual</option >
+      <option value="year" >Anual</option >
+      </select >
+    </label >
+    </div>
+    <!-- <div class="form-group">
       <a class="item item-icon-left" ng-click="openModal()">
       <i class="icon ion-ios-paw"></i>
         Mascotas
       </a>
-    </div>
+    </div>-->
     
       <div class="padding" >
         <button class="button button-royal button-block"
